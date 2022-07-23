@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion": "2022-07-23",
   "Description": "CloudFormation Template as part of the 2022 Fundacion Santa Fé Hackathon. Created by GuAI Artificial Intelligence.",
   "Resources": {
-    "SDLS3Bucket": {
+    "GuAIS3Bucket": {
       "Type" : "AWS::S3::Bucket",
       "Properties" : {
         "BucketName": {
@@ -94,45 +94,28 @@
                 "Fn::Join": [
                   "", [
                     {
-                      "Fn::GetAtt" : [ "SDLS3Bucket", "Arn" ]
+                      "Fn::GetAtt" : [ "GuAIS3Bucket", "Arn" ]
                     },
                     "/*"
                   ]
                 ]
               }
-            },
-            // {
-            //   "Effect": "Allow",
-            //   "Action": [
-            //     "s3:GetObject",
-            //     "s3:PutObject"
-            //   ],
-            //   "Resource": {
-            //     "Fn::Join": [
-            //       "", [
-            //         {
-            //           "Fn::GetAtt" : [ "SDLS3Bucket", "Arn" ]
-            //         },
-            //         "/compressed-parquet"
-            //       ]
-            //     ]
-            //   }
-            // }
+            }
           ]
         },
         "Roles": [
           {
-            "Ref": "SDLGlueRole"
+            "Ref": "GuAIGlueRole"
           }
         ]
       }
     },
-    "SDLFirehoseRole": {
+    "GuAIFirehoseRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": "SDL-FirehoseRole",
+        "RoleName": "GuAI-FirehoseRole",
         "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
+          "Version": "2022-07-23",
           "Statement": [
             {
               "Sid": "",
@@ -156,12 +139,12 @@
         ]
       }
     },
-    "SDLFirehosePolicy": {
+    "GuAIFirehosePolicy": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
         "PolicyName": "FirehosePolicyServerlessDataLakeImmersion",
         "PolicyDocument": {
-          "Version": "2012-10-17",
+          "Version": "2022-07-23",
           "Statement": [
             {
               "Sid": "",
@@ -187,17 +170,7 @@
                   "Fn::Join": [
                     "", [
                       {
-                        "Fn::GetAtt" : [ "SDLS3Bucket", "Arn" ]
-                      },
-                      "/compressed-parquet"
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "", [
-                      {
-                        "Fn::GetAtt" : [ "SDLS3Bucket", "Arn" ]
+                        "Fn::GetAtt" : [ "GuAIS3Bucket", "Arn" ]
                       },
                       "/*"
                     ]
@@ -250,7 +223,7 @@
                       {
                         "Ref": "AWS::AccountId"
                       },
-                      ":log-group:/aws/kinesisfirehose/sdl-firehose-stream:log-stream:*"
+                      ":log-group:/aws/kinesisfirehose/guai-firehose-stream:log-stream:*"
                     ]
                   ]
                 }
@@ -313,17 +286,17 @@
         },
         "Roles": [
           {
-            "Ref": "SDLFirehoseRole"
+            "Ref": "GuAIFirehoseRole"
           }
         ]
       }
     },
-    "SDLSageMakerRole": {
+    "GuAISageMakerRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": "SDL-SageMakerRole",
+        "RoleName": "GuAI-SageMakerRole",
         "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
+          "Version": "2022-07-23",
           "Statement": [
             {
               "Effect": "Allow",
@@ -342,12 +315,12 @@
         ]
       }
     },
-    "SDLSageMakerPolicy": {
+    "GuAISageMakerPolicy": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
         "PolicyName": "SageMakerNotebookPolicyServerlessDataLake",
         "PolicyDocument": {
-          "Version": "2012-10-17",
+          "Version": "2022-07-23",
           "Statement": [
             {
               "Effect": "Allow",
@@ -577,7 +550,7 @@
         },
         "Roles": [
           {
-            "Ref": "SDLSageMakerRole"
+            "Ref": "GuAISageMakerRole"
           }
         ]
       }
