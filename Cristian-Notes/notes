@@ -1,16 +1,3 @@
-AWS 
-* Cristian ha estado en varios proyectos con Santa Fe
-
-
-export AWS_DEFAULT_REGION=us-east-1
-export AWS_ACCESS_KEY_ID=ASIAZ7JBD4PBAOHBCTCU
-export AWS_SECRET_ACCESS_KEY=+u3hq2aca0yAIysHtzA9PUXXdFoldsYpw4bdTBZo
-export AWS_SESSION_TOKEN=IQoJb3JpZ2luX2VjEBsaCXVzLWVhc3QtMSJIMEYCIQD3FgM+M8ezd9dUiA7fLFzoEuiEdHo2+b+QTh2PAe8kNAIhAKB8xKpVCPyFHq7moQohQ6H3hyydNWFB9ynh+jDgoyyGKpcCCGQQARoMNjg1NjUzNjE1NTU0Igxf5Z9zOKvGXvKhG2Qq9AH4lyofbzNnFTqnCGupqVqCAuU28n03COn8FWaA3Nm+Dh+B3h7ih7Dd32v7r/x9LTM+BuGc1qS+rwf5phAJCDjzp8trIbGuB5oD2+a4vqs1fFozlIWffcyKszzsoPQ9Sq4dsZxjRoEsYMwiAnyuXK3nVDerjWpngd03pZ6s9n0e79DIG7Th6+XMZRRgP0AG0oM/mM/moPSZilUgnYps0lZTn2mO4g8mQRbzNJFtyHnJVkut0GjWEGE67dlafbvGZJMP0n+H6sUd34Vj3ImgIswuZRRTxheEqRG5vhsBsS8uSEzXqpsiJXi/5YhR3q+ozRJs0OquMKfW65YGOpwB9M8hJ/4vb7L2HRX/vOmXIVuo8Fi1DyunbNCP2nXbi7ob4Bp/i8xYzhezp80PBUdGqL2u8dOvpfGUN0hggP1wKHqQcxh+PXPjHzngKrvT++3EbScpbW5RrQC0Tm5awIduX3b1GI9JRM7ndk9GZdM8ytDZ+Yv37qkhNsmLSMNZzeoeCQ14bDylbZpkGvBFJySkjxa0fH4Fs82pOsil
-
-
-account id
-685653615554
-
 
 # Copiar de un bucket a otro
 export MY_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
@@ -18,12 +5,72 @@ aws s3 cp s3://kat-tame-bda-immersion/raw/2019 "s3://sdl-immersion-day-$MY_ACCOU
 
 
 https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-deployment.html 
-https://repost.aws/questions/QUoiI3L85FT6OmPewooCH4lQ/how-to-connect-a-sagemaker-notebook-to-glue-catalog
+	https://repost.aws/questions/QUoiI3L85FT6OmPewooCH4lQ/how-to-connect-a-sagemaker-notebook-to-glue-catalog
 https://static.us-east-1.prod.workshops.aws/public/2a92beff-fa6a-411b-aa54-76bef1a8708d/static/serverlessDataLakeImmersionIAMcf.json 
 https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/  
 
 
+
+
+
+
+
+
+
+PASOS AWS
+
+Repo Github: hackaton-fsantafe-backend
+
+1. Crear pila en cloud formation
+	- tutorial: https://catalog.us-east-1.prod.workshops.aws/workshops/ea7ddf16-5e0a-4ec7-b54e-5cadf3028b78/en-US/prereq/byoa
+	- archivo: GuaiHackatonFSantafe.json (ubicado en la raiz del repo de github)
+	- nombre stack: GuAI-Service-Roles
+	
+	Se crean automáticamente
+		- bucket en s3
+		- roles para glue y sagemaker
+		
+2. Crear carpetas de datos dentro del bucket 
+	- 01_raw
+	- 02_intermediate
+	- 03_primary
+	. 04_feature
+	. 05_model_input
+	- 06_models
+	- 07_model_output
+	- 08_reporting
+	
+	creadas de acuerdo a la convencion: https://kedro.readthedocs.io/en/stable/faq/faq.html#what-is-data-engineering-convention	
+	
+3. Subir datos brutos a carpeta 01_raw
+
+4. Crear base de datos en Glue
+	- nombre: guai-db
+5. Crear crawler en Glue
+	- nombre: guai-crawler-raw
+	- asignar rol: GuAI-GlueRole
+
+6. abrir aws-glue studio
+	- crear un job
+		- nombre: guai-raw-job
+
+7. abrir sagemake studio
+	- crear usuarios y asignarles el rol: GuAI-SageMakerRole
+		
+
+
+EC2:
+	para que funcione hay que crear un rol indicado lo de ec2
+	instalar boto3, awswrangler
+	en los scripts que usen awswrangler hacer esta definicion (y usar el mismo código de sagemaker):
+		boto3.setup_default_session(region_name="us-east-2")
+		
+	
+	
 ROLES
+
+***El Rol que accede a quicksight dener tener todos los permisos.
+
 AmazonS3FullAccess	Administrada por AWS	
 Provides full access to all buckets via the AWS Management Console.
 
@@ -39,7 +86,24 @@ Provides full access to AWS Glue via the AWS Management Console
 AmazonSageMakerFullAccess	Administrada por AWS	
 Provides full access to Amazon SageMaker via the AWS Management Console and SDK. Also provides select access to related services (e.g., S3, ECR, CloudWatch Logs).
 
-SageMakerNotebookPolicyServerlessDataLake	Cliente insertado
+
+	
+**** Lambda:
+	crear rol con lo de lambda y:
+		AmazonEC2FullAccess	Administrada por AWS	
+Provides full access to Amazon EC2 via the AWS Management Console.
+
+AmazonS3FullAccess	Administrada por AWS	
+Provides full access to all buckets via the AWS Management Console.
+
+AWSLambdaExecute	Administrada por AWS	
+Provides Put, Get access to S3 and full access to CloudWatch Logs.
+
+AWSGlueConsoleFullAccess	Administrada por AWS	
+Provides full access to AWS Glue via the AWS Management Console
+
+AmazonSageMakerFullAccess	Administrada por AWS	
+Provides full access to Amazon SageMaker via the AWS Management Console and SDK. Also provides select access to related services (e.g., S3, ECR, CloudWatch Logs).
 
 
 
@@ -47,18 +111,10 @@ SageMakerNotebookPolicyServerlessDataLake	Cliente insertado
 
 
 
-PASOS AWS
-1. Crear Bucket
-	- guai-hackaton-fsantafe
-2. Crear carpetas de datos dentro del bucket
-	- 01_raw
-	- 02_intermediate
-	- 03_primary
-	. 04_feature
-	. 05_model_input
-	- 06_models
-	- 07_model_output
-	- 08_reporting
-3. Subir datos brutos a carpeta 01_raw
-4. Crear base de datos en Glue
-5. crear crawler en Glue, asociarlo a la base de datos y ejecutar
+
+
+
+
+
+
+
