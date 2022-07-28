@@ -3,8 +3,8 @@ import config
 class TriageAgent(object):
     
     def __init__(self):
-        self.max_enfermeros = 2
-        self.enfermeros_disponibles = 2
+        self.max_enfermeros = 1
+        self.enfermeros_disponibles = 1
 
     def cambiar_fase_paciente(self, paciente):
         # TODO: Acá va la función de que devuelve el estato a partir de las variables

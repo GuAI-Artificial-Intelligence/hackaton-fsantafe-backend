@@ -16,6 +16,7 @@ def get_patients_by_step(steps_by_hour=6):
     patients_by_step = list()
     for p in patientes_by_hour:
         patients_step = math.ceil(p/steps_by_hour)
+        patients_step = round(p/steps_by_hour)
         for s in range(steps_by_hour):
             patients_by_step.append(patients_step)
     return patients_by_step
