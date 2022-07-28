@@ -21,10 +21,9 @@ if __name__=='__main__':
     # Test con un solo paso
     emergency_model.step()
     for p in emergency_model.schedule.agents:
-        print(p.state)
+        print(p.fase)
 
     # # Test con un múltiples pasos
-    # for s in range(QUANTITY_OF_STEPS):
-    #     patient_model.step()
-
+    for s in range(8):
+         emergency_model.step()
 

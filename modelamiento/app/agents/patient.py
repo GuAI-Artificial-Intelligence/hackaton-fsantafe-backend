@@ -1,13 +1,23 @@
 from mesa import Agent
 import config as config
 
+
 class PatientAgent(Agent):
-    def __init__(self, unique_id, model):
+    def __init__(
+        self, unique_id, model,
+        edad, convenio
+                 ):
         super().__init__(unique_id, model)
-        self.state = None
+        self.fase: str = config.FASES['sin_ingresar']
+        self.edad: int = edad
+        self.imagenes: bool = False
+        self.examenes: bool = False
+        self.interconsulta: bool = False
+        self.convenio: str = convenio
+        self.diagnostico: str = None
 
     def step(self):
-        new_state = self.state
-        if self.state == config.STATES['digiturno']:
-            new_state = self.model.triage_agent.change_patient_state(self)
-        self.state = new_state
+        nueva_fase = self.fase
+        if self.fase == config.FASES['digiturno']:
+            nueva_fase = self.model.triage_agent.cambiar_fase_paciente(self)
+        self.fase = nueva_fase

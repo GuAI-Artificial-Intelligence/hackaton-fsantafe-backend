@@ -13,9 +13,14 @@ class EmergencyModel(Model):
         self.num_agents = n
         self.schedule = mesa.time.BaseScheduler(self)
         for i in range(self.num_agents):
-            a = PatientAgent(i, self)
+            a = PatientAgent(
+                unique_id=i, 
+                model=self,
+                edad=30,
+                convenio='SURA'
+                )
             self.schedule.add(a)
-        
+
         # Creación de agentes que cambian el estado del paciente
         self.triage_agent = triage_agent
 
