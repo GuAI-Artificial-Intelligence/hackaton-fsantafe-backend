@@ -17,7 +17,12 @@ class PatientAgent(Agent):
         self.diagnostico: str = None
 
     def step(self):
-        nueva_fase = self.fase
-        if self.fase == config.FASES['digiturno']:
-            nueva_fase = self.model.triage_agent.cambiar_fase_paciente(self)
-        self.fase = nueva_fase
+        if self.unique_id < self.model.step_num_patients:
+            print(self.unique_id)
+
+        # print(self.model.step_num_patients)
+
+        # nueva_fase = self.fase
+        # if self.fase == config.FASES['digiturno']:
+        #     nueva_fase = self.model.triage_agent.cambiar_fase_paciente(self)
+        # self.fase = nueva_fase

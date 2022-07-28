@@ -6,18 +6,22 @@ class EmergencyModel(Model):
     
     def __init__(
         self,
-        n,
+        patients_by_step,
+        edad_pacientes,
+        convenios_pacientes,
         triage_agent):
 
         # Creación de agentes pacientes
-        self.num_agents = n
+        self.patients_by_step = patients_by_step
+        self.step_num_patients = None
+        self.num_patient_agents = sum(self.patients_by_step)
         self.schedule = mesa.time.BaseScheduler(self)
-        for i in range(self.num_agents):
+        for i in range(self.num_patient_agents):
             a = PatientAgent(
                 unique_id=i, 
                 model=self,
-                edad=30,
-                convenio='SURA'
+                edad=edad_pacientes[i],
+                convenio=convenios_pacientes[i]
                 )
             self.schedule.add(a)
 
@@ -25,4 +29,5 @@ class EmergencyModel(Model):
         self.triage_agent = triage_agent
 
     def step(self):
+        self.step_num_patients = self.patients_by_step[self.schedule.steps]
         self.schedule.step()
