@@ -21,9 +21,13 @@ class EmergencyModel(Model):
         height,
         tiempo_promedio_consulta):
 
+        # Grafico
         self.grid = MultiGrid(width, height, False)
         self.schedule = mesa.time.BaseScheduler(self)
         self.running = True
+        self.num_pacientes_digiturno = 0
+        self.num_pacientes_triage = 0
+        self.num_pacientes_consulta = 0
 
         # Creación de agentes pacientes
         self.patients_by_step = patients_by_step
@@ -45,7 +49,12 @@ class EmergencyModel(Model):
         self.triage_agent = TriageAgent(self)
 
         self.datacollector = mesa.DataCollector(
-            model_reporters={"Pacientes": "num_agents"},
+            model_reporters={
+                "Pacientes": "num_patient_agents",
+                'Pacientes Digiturno': "num_pacientes_digiturno",
+                'Pacientes Triage': "num_pacientes_triage",
+                'Pacientes Consulta': "num_pacientes_consulta",
+                },
             agent_reporters={
                 "Fase": "fase", "Edad": "edad", "Imagenes": "imagenes",
                 "Examenes":"examenes", "Interconsulta":"interconsulta",
@@ -53,6 +62,8 @@ class EmergencyModel(Model):
                 "StepDigiturno": 'step_digiturno', "StepTriage": 'step_triage'
                 }
         )
+
+
         
 
 
@@ -60,6 +71,15 @@ class EmergencyModel(Model):
         self.triage_agent.enfermeros_disponibles += 1
         self.pacientes_ingresados += self.patients_by_step[self.schedule.steps]
         self.schedule.step()
+
+        # Actulizar totales para graficas
+        agents = self.schedule.agents
+        pacientes_digiturno = [(a.fase==1) for a in agents]
+        pacientes_triage = [(a.fase==2) for a in agents]
+        pacientes_consulta = [(a.fase==3) for a in agents]
+        self.num_pacientes_digiturno = int(np.sum(pacientes_digiturno))
+        self.num_pacientes_triage = int(np.sum(pacientes_triage))
+        self.num_pacientes_consulta = int(np.sum(pacientes_consulta))
         self.datacollector.collect(self)
 
     @property

@@ -19,27 +19,27 @@ from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 
+
 def agent_portrayal(agent):
     portrayal = {
         'Shape': 'circle',
         'Layer': 0,
         'r': 1,
         'Color': 'gray'}
-        
 
     # (Un)masked agents show up as (non-)filled circles
     if agent.masked == True:
         portrayal['Filled'] = 'true'
-    
+
     if agent.fase == 1:
         portrayal['Color'] = 'lightblue'
-    
+
     if agent.fase == 2:
         portrayal['Color'] = 'green'
-    
+
     if agent.fase == 3:
         portrayal['Color'] = 'red'
-    
+
     if agent.fase == 8:
         portrayal['Color'] = 'white'
 
@@ -75,23 +75,23 @@ if __name__ == '__main__':
         'height': sum(patients_by_step),
         'tiempo_promedio_consulta': UserSettableParameter(
             'slider', 'Tiempo de consulta', 2, 5, 20, 5),
-        
+
     }
 
     # grid = CanvasGrid(agent_portrayal, 50, 50, 500, 500)
     grid = CanvasGrid(agent_portrayal, 49, sum(patients_by_step), 800, 2000)
 
     line_charts = ChartModule([
-        {'Label': 'Triage', 'Color': 'green'}, 
-        {'Label': 'Infected', 'Color': 'red'},
-        {'Label': 'Recovered & Immune', 'Color': 'green'}])
+        {'Label': 'Pacientes Digiturno', 'Color': 'lightblue'},
+        {'Label': 'Pacientes Triage', 'Color': 'green'},
+        {'Label': 'Pacientes Consulta', 'Color': 'red'},
+    ])
 
-    server = ModularServer(EmergencyModel, [grid, line_charts], 
-                            'EMERGENCIAS Fundación Santa Fé', model_params)
+    server = ModularServer(EmergencyModel, [grid, line_charts],
+                           'EMERGENCIAS Fundación Santa Fé', model_params)
 
     server.port = 8521  # default port if unspecified
     server.launch()
-
 
     # # Create emergency model
     # emergency_model = EmergencyModel(
