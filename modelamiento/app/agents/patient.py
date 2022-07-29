@@ -1,3 +1,4 @@
+import random
 from mesa import Agent
 import config as config
 
@@ -29,14 +30,16 @@ class PatientAgent(Agent):
             self.move()
 
         if self.fase == config.FASES['triage']:
-            pass
-
+            ruido = random.choice([0, 1, 2, 3, 4, -1,-2,-3,-4])
+            limit = (5 + ruido)
+            if (self.model.schedule.steps - self.step_triage >= limit):
+                self.fase = config.FASES['consulta']
+            
 
         if self.fase == config.FASES['digiturno']:
             self.fase, self.triage, self.step_triage = self.model.triage_agent.atencion(self)
             if not (self.triage in [3, 4]):
                 self.fase = config.FASES['fuera_de_estudio']
-                
 
         if (self.unique_id < self.model.pacientes_ingresados) and (self.fase == config.FASES['sin_ingresar']):
             self.fase = config.FASES['digiturno']

@@ -6,6 +6,9 @@ from mesa.space import MultiGrid
 from agents.patient import PatientAgent
 from agents.triage import TriageAgent
 
+# numpy
+import numpy as np
+
 
 class EmergencyModel(Model):
     
@@ -15,7 +18,8 @@ class EmergencyModel(Model):
         edad_pacientes,
         convenios_pacientes,
         width,
-        height,):
+        height,
+        tiempo_promedio_consulta):
 
         self.grid = MultiGrid(width, height, False)
         self.schedule = mesa.time.BaseScheduler(self)
@@ -57,3 +61,9 @@ class EmergencyModel(Model):
         self.pacientes_ingresados += self.patients_by_step[self.schedule.steps]
         self.schedule.step()
         self.datacollector.collect(self)
+
+    @property
+    def triage(self):
+        agents = self.schedule.agents
+        triage = [a.fase==2 for a in agents]
+        return int(np.sum(triage))

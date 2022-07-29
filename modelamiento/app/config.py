@@ -45,6 +45,7 @@ SIMULATION_PARAMETERS = {
     'pacientes_por_hora': [
         10.0, 15.0, 19.0, 20.0, 23.0, 21.0, 17.0, 18.0, 
     ]
+
     
 }
 

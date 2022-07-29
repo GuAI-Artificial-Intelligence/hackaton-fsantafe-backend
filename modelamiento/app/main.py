@@ -37,6 +37,9 @@ def agent_portrayal(agent):
     if agent.fase == 2:
         portrayal['Color'] = 'green'
     
+    if agent.fase == 3:
+        portrayal['Color'] = 'red'
+    
     if agent.fase == 8:
         portrayal['Color'] = 'white'
 
@@ -69,18 +72,21 @@ if __name__ == '__main__':
         'edad_pacientes': edad_pacientes,
         'convenios_pacientes': convenios_pacientes,
         'width': 49,
-        'height': sum(patients_by_step)
+        'height': sum(patients_by_step),
+        'tiempo_promedio_consulta': UserSettableParameter(
+            'slider', 'Tiempo de consulta', 2, 5, 20, 5),
+        
     }
 
     # grid = CanvasGrid(agent_portrayal, 50, 50, 500, 500)
-    grid = CanvasGrid(agent_portrayal, 49, sum(patients_by_step), 800, 1500)
+    grid = CanvasGrid(agent_portrayal, 49, sum(patients_by_step), 800, 2000)
 
     line_charts = ChartModule([
-        {'Label': 'Susceptible', 'Color': 'lightblue'}, 
+        {'Label': 'Triage', 'Color': 'green'}, 
         {'Label': 'Infected', 'Color': 'red'},
         {'Label': 'Recovered & Immune', 'Color': 'green'}])
 
-    server = ModularServer(EmergencyModel, [grid, ], 
+    server = ModularServer(EmergencyModel, [grid, line_charts], 
                             'COVID Simulation Model', model_params)
 
     server.port = 8521  # default port if unspecified
