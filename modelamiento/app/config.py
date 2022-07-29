@@ -6,7 +6,8 @@ FASES = {
     'observacion': 4,
     'hospitalizacion': 5,
     'alta': 6,
-    'traslado': 7
+    'traslado': 7,
+    'fuera_de_estudio': 8
 }
 
 STEPS_BY_HOUR = 6

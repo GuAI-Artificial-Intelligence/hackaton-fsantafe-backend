@@ -1,6 +1,7 @@
 import mesa
 from mesa import Model
 from agents.patient import PatientAgent
+from agents.triage import TriageAgent
 
 class EmergencyModel(Model):
     
@@ -8,8 +9,7 @@ class EmergencyModel(Model):
         self,
         patients_by_step,
         edad_pacientes,
-        convenios_pacientes,
-        triage_agent):
+        convenios_pacientes):
 
         # Creación de agentes pacientes
         self.patients_by_step = patients_by_step
@@ -26,8 +26,21 @@ class EmergencyModel(Model):
             self.schedule.add(a)
 
         # Creación de agentes que cambian el estado del paciente
-        self.triage_agent = triage_agent
+        self.triage_agent = TriageAgent(self)
+
+        self.datacollector = mesa.DataCollector(
+            model_reporters={"Pacientes": "num_agents"},
+            agent_reporters={
+                "Fase": "fase", "Edad": "edad", "Imagenes": "imagenes",
+                "Examenes":"examenes", "Interconsulta":"interconsulta",
+                "Convenio":"convenio","Diagnostico":"diagnostico", "Triage":"triage",
+                "StepDigiturno": 'step_digiturno', "StepTriage": 'step_triage'
+                }
+        )
+        # self.datacollector.collect(self)
 
     def step(self):
+        self.triage_agent.enfermeros_disponibles += 1
         self.pacientes_ingresados += self.patients_by_step[self.schedule.steps]
         self.schedule.step()
+        self.datacollector.collect(self)

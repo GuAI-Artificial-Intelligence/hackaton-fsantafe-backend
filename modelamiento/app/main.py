@@ -24,33 +24,31 @@ if __name__ == '__main__':
     patients_by_step = create_patients.get_patients_by_step(steps_by_hour=6)
     num_paciente_diarios = sum(patients_by_step)
 
-    print('Patientes by step:', patients_by_step)
-
     edad_pacientes = create_patients.get_edad_pacientes(
         config.SIMULATION_PARAMETERS, num_paciente_diarios)
     convenios_pacientes = create_patients.get_convenio_pacientes(
         config.SIMULATION_PARAMETERS, num_paciente_diarios)
 
-    # Creation of agents
-    triage_agent = TriageAgent()
 
     # Create emergency model
     emergency_model = EmergencyModel(
         patients_by_step=patients_by_step,
-        triage_agent=triage_agent,
         edad_pacientes=edad_pacientes,
         convenios_pacientes=convenios_pacientes
     )
 
     counter = 0
     for step, num_patients in enumerate(patients_by_step):
-        print('-------PASO-------', step)
-        print('---patients---', num_patients)
+        # print('-------PASO-------', step)
+        # print('---patients---', num_patients)
         emergency_model.step()
         # counter += 1
         # if counter == 20:
         #     break
         # print(emergency_model.schedule.steps)
+    data = emergency_model.datacollector.get_agent_vars_dataframe() 
+    data.to_csv('data.csv')
+        
 
 
 
