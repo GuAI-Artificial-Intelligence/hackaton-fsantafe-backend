@@ -1,7 +1,11 @@
 import mesa
 from mesa import Model
+from mesa.space import MultiGrid
+
+# Agents
 from agents.patient import PatientAgent
 from agents.triage import TriageAgent
+
 
 class EmergencyModel(Model):
     
@@ -9,13 +13,18 @@ class EmergencyModel(Model):
         self,
         patients_by_step,
         edad_pacientes,
-        convenios_pacientes):
+        convenios_pacientes,
+        width,
+        height,):
+
+        self.grid = MultiGrid(width, height, False)
+        self.schedule = mesa.time.BaseScheduler(self)
+        self.running = True
 
         # Creación de agentes pacientes
         self.patients_by_step = patients_by_step
         self.pacientes_ingresados = 0
         self.num_patient_agents = sum(self.patients_by_step)
-        self.schedule = mesa.time.BaseScheduler(self)
         for i in range(self.num_patient_agents):
             a = PatientAgent(
                 unique_id=i, 
@@ -24,6 +33,9 @@ class EmergencyModel(Model):
                 convenio=convenios_pacientes[i]
                 )
             self.schedule.add(a)
+
+            # Grafico
+            self.grid.place_agent(a, (0, self.num_patient_agents-i-1))
 
         # Creación de agentes que cambian el estado del paciente
         self.triage_agent = TriageAgent(self)
@@ -37,7 +49,8 @@ class EmergencyModel(Model):
                 "StepDigiturno": 'step_digiturno', "StepTriage": 'step_triage'
                 }
         )
-        # self.datacollector.collect(self)
+        
+
 
     def step(self):
         self.triage_agent.enfermeros_disponibles += 1

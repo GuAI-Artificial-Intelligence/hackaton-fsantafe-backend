@@ -21,7 +21,13 @@ class PatientAgent(Agent):
         self.step_digiturno = None
         self.step_triage = None
 
+        # test grafica
+        self.masked = True
+
     def step(self):
+        if self.fase != config.FASES['sin_ingresar']:
+            self.move()
+
         if self.fase == config.FASES['triage']:
             pass
 
@@ -30,9 +36,13 @@ class PatientAgent(Agent):
             self.fase, self.triage, self.step_triage = self.model.triage_agent.atencion(self)
             if not (self.triage in [3, 4]):
                 self.fase = config.FASES['fuera_de_estudio']
+                
 
         if (self.unique_id < self.model.pacientes_ingresados) and (self.fase == config.FASES['sin_ingresar']):
             self.fase = config.FASES['digiturno']
             self.step_digiturno = self.model.schedule.steps
 
+    def move(self):
+        x,y = self.pos
+        self.model.grid.move_agent(self, (x+1, y))
 

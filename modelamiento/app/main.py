@@ -14,6 +14,41 @@ import config
 # Pandas
 import pandas as pd
 
+# Visualization
+from mesa.visualization.modules import CanvasGrid, ChartModule
+from mesa.visualization.ModularVisualization import ModularServer
+from mesa.visualization.UserParam import UserSettableParameter
+
+def agent_portrayal(agent):
+    portrayal = {
+        'Shape': 'circle',
+        'Layer': 0,
+        'r': 1,
+        'Color': 'gray'}
+        
+
+    # (Un)masked agents show up as (non-)filled circles
+    if agent.masked == True:
+        portrayal['Filled'] = 'true'
+    
+    if agent.fase == 1:
+        portrayal['Color'] = 'lightblue'
+    
+    if agent.fase == 2:
+        portrayal['Color'] = 'green'
+    
+    if agent.fase == 8:
+        portrayal['Color'] = 'white'
+
+    # if agent.infected == True:
+    #     portrayal['Color'] = 'red'
+
+    # if agent.immune == True:
+    #     portrayal['Color'] = 'green'
+
+    return portrayal
+
+
 if __name__ == '__main__':
     # Definen la carpeta raíz del proyecto
     abspath = os.path.abspath(__file__)
@@ -29,29 +64,47 @@ if __name__ == '__main__':
     convenios_pacientes = create_patients.get_convenio_pacientes(
         config.SIMULATION_PARAMETERS, num_paciente_diarios)
 
+    model_params = {
+        'patients_by_step': patients_by_step,
+        'edad_pacientes': edad_pacientes,
+        'convenios_pacientes': convenios_pacientes,
+        'width': 49,
+        'height': sum(patients_by_step)
+    }
 
-    # Create emergency model
-    emergency_model = EmergencyModel(
-        patients_by_step=patients_by_step,
-        edad_pacientes=edad_pacientes,
-        convenios_pacientes=convenios_pacientes
-    )
+    # grid = CanvasGrid(agent_portrayal, 50, 50, 500, 500)
+    grid = CanvasGrid(agent_portrayal, 49, sum(patients_by_step), 800, 1500)
 
-    counter = 0
-    for step, num_patients in enumerate(patients_by_step):
-        # print('-------PASO-------', step)
-        # print('---patients---', num_patients)
-        emergency_model.step()
-        # counter += 1
-        # if counter == 20:
-        #     break
-        # print(emergency_model.schedule.steps)
-    data = emergency_model.datacollector.get_agent_vars_dataframe() 
-    data.to_csv('data.csv')
-        
+    line_charts = ChartModule([
+        {'Label': 'Susceptible', 'Color': 'lightblue'}, 
+        {'Label': 'Infected', 'Color': 'red'},
+        {'Label': 'Recovered & Immune', 'Color': 'green'}])
+
+    server = ModularServer(EmergencyModel, [grid, ], 
+                            'COVID Simulation Model', model_params)
+
+    server.port = 8521  # default port if unspecified
+    server.launch()
 
 
+    # # Create emergency model
+    # emergency_model = EmergencyModel(
+    #     patients_by_step=patients_by_step,
+    #     edad_pacientes=edad_pacientes,
+    #     convenios_pacientes=convenios_pacientes
+    # )
 
+    # counter = 0
+    # for step, num_patients in enumerate(patients_by_step):
+    #     # print('-------PASO-------', step)
+    #     # print('---patients---', num_patients)
+    #     emergency_model.step()
+    #     # counter += 1
+    #     # if counter == 20:
+    #     #     break
+    #     # print(emergency_model.schedule.steps)
+    # data = emergency_model.datacollector.get_agent_vars_dataframe()
+    # data.to_csv('data.csv')
 
     # for i in range(10):
     #     edad = list()
