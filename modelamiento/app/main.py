@@ -39,6 +39,18 @@ def agent_portrayal(agent):
 
     if agent.fase == 3:
         portrayal['Color'] = 'red'
+    
+    if agent.fase == 4:
+        portrayal['Color'] = 'orange'
+    
+    if agent.fase == 5:
+        portrayal['Color'] = 'blue'
+
+    if agent.fase == 6:
+        portrayal['Color'] = 'lightgray'
+
+    if agent.fase == 7:
+        portrayal['Color'] = 'pink'
 
     if agent.fase == 8:
         portrayal['Color'] = 'white'
@@ -73,8 +85,12 @@ if __name__ == '__main__':
         'convenios_pacientes': convenios_pacientes,
         'width': 49,
         'height': sum(patients_by_step),
-        'tiempo_promedio_consulta': UserSettableParameter(
-            'slider', 'Tiempo de consulta', 2, 5, 20, 5),
+        'tiempo_promedio_examenes': UserSettableParameter(
+            'slider', 'Tiempo promedio de examenes', 2, 5, 20, 5),
+        'tiempo_promedio_imagenes': UserSettableParameter(
+            'slider', 'Tiempo promedio de imagenes', 2, 5, 20, 5),
+        'tiempo_promedio_interconsulta': UserSettableParameter(
+            'slider', 'Tiempo  promedio de interconsulta', 2, 5, 20, 5),
 
     }
 
@@ -82,9 +98,13 @@ if __name__ == '__main__':
     grid = CanvasGrid(agent_portrayal, 49, sum(patients_by_step), 800, 2000)
 
     line_charts = ChartModule([
-        {'Label': 'Pacientes Digiturno', 'Color': 'lightblue'},
-        {'Label': 'Pacientes Triage', 'Color': 'green'},
-        {'Label': 'Pacientes Consulta', 'Color': 'red'},
+        {'Label': 'Digiturno', 'Color': 'lightblue'},
+        {'Label': 'Triage', 'Color': 'green'},
+        {'Label': 'Consulta', 'Color': 'red'},
+        {'Label': 'Observacion', 'Color': 'orange'},
+        {'Label': 'Hospitalizacion', 'Color': 'blue'},
+        # {'Label': 'Alta', 'Color': 'lightgray'},
+        {'Label': 'Traslado', 'Color': 'pink'},
     ])
 
     server = ModularServer(EmergencyModel, [grid, line_charts],

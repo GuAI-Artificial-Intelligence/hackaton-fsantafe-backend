@@ -19,7 +19,9 @@ class EmergencyModel(Model):
         convenios_pacientes,
         width,
         height,
-        tiempo_promedio_consulta):
+        tiempo_promedio_interconsulta,
+        tiempo_promedio_examenes,
+        tiempo_promedio_imagenes):
 
         # Grafico
         self.grid = MultiGrid(width, height, False)
@@ -28,6 +30,11 @@ class EmergencyModel(Model):
         self.num_pacientes_digiturno = 0
         self.num_pacientes_triage = 0
         self.num_pacientes_consulta = 0
+        self.num_pacientes_observacion = 0
+
+        self.num_pacientes_hospitalizacion = 0
+        self.num_pacientes_alta = 0
+        self.num_pacientes_traslado = 0
 
         # Creación de agentes pacientes
         self.patients_by_step = patients_by_step
@@ -51,9 +58,13 @@ class EmergencyModel(Model):
         self.datacollector = mesa.DataCollector(
             model_reporters={
                 "Pacientes": "num_patient_agents",
-                'Pacientes Digiturno': "num_pacientes_digiturno",
-                'Pacientes Triage': "num_pacientes_triage",
-                'Pacientes Consulta': "num_pacientes_consulta",
+                'Digiturno': "num_pacientes_digiturno",
+                'Triage': "num_pacientes_triage",
+                'Consulta': "num_pacientes_consulta",
+                'Observacion': "num_pacientes_observacion",
+                'Hospitalizacion': "num_pacientes_hospitalizacion",
+                # 'Alta': "num_pacientes_alta",
+                'Trasla': "num_pacientes_traslado",
                 },
             agent_reporters={
                 "Fase": "fase", "Edad": "edad", "Imagenes": "imagenes",
@@ -77,9 +88,21 @@ class EmergencyModel(Model):
         pacientes_digiturno = [(a.fase==1) for a in agents]
         pacientes_triage = [(a.fase==2) for a in agents]
         pacientes_consulta = [(a.fase==3) for a in agents]
+        pacientes_observacion = [(a.fase==4) for a in agents]
+
+        pacientes_hospitalizacion = [(a.fase==5) for a in agents]
+        pacientes_alta = [(a.fase==6) for a in agents]
+        pacientes_traslado = [(a.fase==7) for a in agents]
+
         self.num_pacientes_digiturno = int(np.sum(pacientes_digiturno))
         self.num_pacientes_triage = int(np.sum(pacientes_triage))
         self.num_pacientes_consulta = int(np.sum(pacientes_consulta))
+        self.num_pacientes_observacion = int(np.sum(pacientes_observacion))
+
+        self.num_pacientes_hospitalizacion = int(np.sum(pacientes_hospitalizacion))
+        self.num_pacientes_alta = int(np.sum(pacientes_alta))
+        self.num_pacientes_traslado = int(np.sum(pacientes_traslado))
+
         self.datacollector.collect(self)
 
     @property

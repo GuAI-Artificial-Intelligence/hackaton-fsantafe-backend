@@ -28,7 +28,26 @@ class PatientAgent(Agent):
         if self.fase != config.FASES['sin_ingresar']:
             self.move()
 
-        
+        if self.fase == config.FASES['observacion']:
+            r = random.random()
+            if r>=0 and r<=0.15:
+                self.fase = config.FASES['hospitalizacion']
+            if r>0.15 and r<=0.9:
+                self.fase = config.FASES['alta']
+            if r>0.9 and r<=1:
+                self.fase = config.FASES['traslado']
+            
+
+
+        if self.fase == config.FASES['consulta']:
+            r = random.random()
+            if r>=0 and r<=0.33:
+                self.imagenes = True
+            if r>0.33 and r<=0.66:
+                self.examenes = True
+            if r>0.66 and r<=1:
+                self.interconsulta = True
+            self.fase = config.FASES['observacion']
 
         if self.fase == config.FASES['triage']:
             ruido = random.choice([0, 1, 2, 3, 4, -1,-2,-3,-4])
