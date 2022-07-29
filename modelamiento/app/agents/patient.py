@@ -18,7 +18,6 @@ class PatientAgent(Agent):
         self.diagnostico: str = None
         self.triage: int = None
         self.unique_id = unique_id
-        
         self.step_digiturno = None
         self.step_triage = None
 

@@ -87,7 +87,7 @@ if __name__ == '__main__':
         {'Label': 'Recovered & Immune', 'Color': 'green'}])
 
     server = ModularServer(EmergencyModel, [grid, line_charts], 
-                            'COVID Simulation Model', model_params)
+                            'EMERGENCIAS Fundación Santa Fé', model_params)
 
     server.port = 8521  # default port if unspecified
     server.launch()
