@@ -28,6 +28,8 @@ class PatientAgent(Agent):
         if self.fase != config.FASES['sin_ingresar']:
             self.move()
 
+        
+
         if self.fase == config.FASES['triage']:
             ruido = random.choice([0, 1, 2, 3, 4, -1,-2,-3,-4])
             limit = (5 + ruido)
