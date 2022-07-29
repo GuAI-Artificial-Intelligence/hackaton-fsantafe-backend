@@ -21,5 +21,5 @@ class PatientAgent(Agent):
             self.fase = config.FASES['digiturno']
             print(self.unique_id)
 
-        if self.fase == config.FASES['digiturno']:
-            self.fase = self.model.triage_agent.cambiar_fase_paciente(self)
+        #if self.fase == config.FASES['digiturno']:
+        #    self.fase = self.model.triage_agent.cambiar_fase_paciente(self)
